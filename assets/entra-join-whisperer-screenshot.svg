@@ -8,7 +8,7 @@
   <rect width="1280" height="720" fill="url(#bg)"/>
   <rect x="32" y="32" width="1216" height="656" rx="10" ry="10" fill="#0b0f14" stroke="#30363d" stroke-width="2"/>
   <text x="60" y="78" fill="#58a6ff" font-family="Consolas, 'Courier New', monospace" font-size="22">Entra Join Whisperer</text>
-  <text x="60" y="108" fill="#8b949e" font-family="Consolas, 'Courier New', monospace" font-size="16">Version: 1.1.0</text>
+  <text x="60" y="108" fill="#8b949e" font-family="Consolas, 'Courier New', monospace" font-size="16">Version: 1.1.2</text>
   <text x="60" y="132" fill="#8b949e" font-family="Consolas, 'Courier New', monospace" font-size="16">Downloaded from: https://raw.githubusercontent.com/homelabber/entra-join-whisperer/main/EntraHybridJoin-Troubleshooter.ps1</text>
   <text x="60" y="156" fill="#8b949e" font-family="Consolas, 'Courier New', monospace" font-size="16">License: MIT (https://opensource.org/licenses/MIT)</text>
 

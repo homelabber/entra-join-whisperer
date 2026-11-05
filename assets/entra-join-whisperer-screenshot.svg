@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <rect x="32" y="32" width="1216" height="656" rx="10" ry="10" fill="#0b0f14" stroke="#30363d" stroke-width="2"/>
+  <text x="60" y="78" fill="#58a6ff" font-family="Consolas, 'Courier New', monospace" font-size="22">Entra Join Whisperer</text>
+  <text x="60" y="108" fill="#8b949e" font-family="Consolas, 'Courier New', monospace" font-size="16">Version: 1.1.0</text>
+  <text x="60" y="132" fill="#8b949e" font-family="Consolas, 'Courier New', monospace" font-size="16">Downloaded from: https://raw.githubusercontent.com/homelabber/entra-join-whisperer/main/EntraHybridJoin-Troubleshooter.ps1</text>
+  <text x="60" y="156" fill="#8b949e" font-family="Consolas, 'Courier New', monospace" font-size="16">License: MIT (https://opensource.org/licenses/MIT)</text>
+
+  <text x="60" y="210" fill="#56d364" font-family="Consolas, 'Courier New', monospace" font-size="18">Interactive Menu</text>
+  <text x="60" y="238" fill="#8b949e" font-family="Consolas, 'Courier New', monospace" font-size="16">Use Up/Down arrows and Enter.</text>
+
+  <rect x="70" y="270" width="730" height="34" fill="#f0f6fc"/>
+  <text x="84" y="293" fill="#0d1117" font-family="Consolas, 'Courier New', monospace" font-size="16">&gt; Refresh Microsoft Learn troubleshooting cache</text>
+  <text x="84" y="328" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Run dsregcmd analysis and show report</text>
+  <text x="84" y="363" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Apply fixes for current findings</text>
+  <text x="84" y="398" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Check for script updates from GitHub</text>
+  <text x="84" y="433" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Update script from GitHub</text>
+  <text x="84" y="468" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Publish script to GitHub</text>
+  <text x="84" y="503" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Export last report</text>
+  <text x="84" y="538" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Exit</text>
+
+  <text x="60" y="610" fill="#7ee787" font-family="Consolas, 'Courier New', monospace" font-size="15">Tip: use -NoMenu with switches for unattended automation in runbooks.</text>
+</svg>

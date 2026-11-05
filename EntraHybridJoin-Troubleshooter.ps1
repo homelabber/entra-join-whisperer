@@ -14,25 +14,19 @@ param(
     [string]$ReportPath,
     [switch]$JsonReport,
     [switch]$Force,
-    [switch]$CheckUpdate,
-    [switch]$UpdateSelf,
-    [switch]$PublishToGitHub,
-    [string]$GitHubRepoUrl,
-    [string]$GitHubBranch = "main",
-    [string]$GitHubToken
+    [switch]$CheckUpdate
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $Script:ToolName = "Entra Join Whisperer"
-$Script:ToolVersion = "1.1.0"
+$Script:ToolVersion = "1.1.2"
 $Script:LicenseName = "MIT"
 $Script:LicenseUrl = "https://opensource.org/licenses/MIT"
 $Script:RepositoryUrl = "https://github.com/homelabber/entra-join-whisperer"
 $Script:DownloadSource = "https://raw.githubusercontent.com/homelabber/entra-join-whisperer/main/EntraHybridJoin-Troubleshooter.ps1"
 $Script:DownloadedFrom = $Script:DownloadSource
-$Script:PublishScriptPath = Join-Path -Path $PSScriptRoot -ChildPath "Publish-EntraJoinWhisperer.ps1"
 
 $Script:LearnUrls = @(
     "https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-hybrid-join-windows-current",
@@ -155,7 +149,7 @@ function Invoke-SelfUpdate {
     }
 
     Write-Warn "Update available: $($status.CurrentVersion) -> $($status.RemoteVersion)"
-    Write-Warn "The script file will be replaced in-place with content from GitHub."
+    Write-Warn "Applying update now (local script file will be replaced)."
     if (-not $Force) {
         $answer = Read-Host "Proceed with self-update? (Y/N)"
         if ($answer -notin @("Y", "y", "Yes", "YES")) {
@@ -170,86 +164,6 @@ function Invoke-SelfUpdate {
     Set-Content -Path $target -Value $status.RemoteContent -Encoding UTF8
     Write-Info "Updated script: $target"
     Write-Info "Backup created: $backup"
-}
-
-function Publish-ScriptToGitHub {
-    param(
-        [string]$RepoUrl,
-        [string]$Branch = "main",
-        [string]$Token
-    )
-
-    if (-not $RepoUrl) {
-        throw "GitHubRepoUrl is required for publishing."
-    }
-    if ($RepoUrl -notmatch "^https://github\.com/.+/.+(\.git)?$") {
-        throw "GitHubRepoUrl must be a standard GitHub repository URL."
-    }
-
-    $licensePath = Join-Path -Path $PSScriptRoot -ChildPath "LICENSE"
-    if (-not (Test-Path $licensePath)) {
-        @"
-MIT License
-
-Copyright (c) 2026 Michael Blanchard
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"@ | Set-Content -Path $licensePath -Encoding UTF8
-    }
-
-    $publishScript = @"
-param(
-    [Parameter(Mandatory = `$true)][string]`$RepoUrl,
-    [Parameter(Mandatory = `$true)][string]`$Branch,
-    [string]`$Token
-)
-`$ErrorActionPreference = 'Stop'
-function Assert-LastExit([string]`$Step) {
-    if (`$LASTEXITCODE -ne 0) {
-        throw "Git command failed during: `$Step"
-    }
-}
-`$temp = Join-Path `$env:TEMP ('entra-join-whisperer-publish-' + [guid]::NewGuid().ToString('N'))
-New-Item -Path `$temp -ItemType Directory -Force | Out-Null
-Copy-Item -Path '$($PSCommandPath.Replace("'", "''"))' -Destination (Join-Path `$temp 'EntraHybridJoin-Troubleshooter.ps1') -Force
-Copy-Item -Path '$($licensePath.Replace("'", "''"))' -Destination (Join-Path `$temp 'LICENSE') -Force
-Push-Location `$temp
-git init | Out-Null; Assert-LastExit 'git init'
-git checkout -b `$Branch | Out-Null; Assert-LastExit 'git checkout'
-git add . | Out-Null; Assert-LastExit 'git add'
-git -c user.name='Entra Join Whisperer' -c user.email='noreply@localhost' commit -m 'Publish Entra Join Whisperer script' | Out-Null; Assert-LastExit 'git commit'
-`$remote = `$RepoUrl
-if (`$Token) {
-    `$remote = `$RepoUrl -replace '^https://', ('https://' + `$Token + '@')
-}
-git remote add origin `$remote
-Assert-LastExit 'git remote add origin'
-git push -u origin `$Branch --force
-Assert-LastExit 'git push'
-Pop-Location
-Remove-Item -Path `$temp -Recurse -Force
-"@
-    Set-Content -Path $Script:PublishScriptPath -Value $publishScript -Encoding UTF8
-    Write-Info "Publish helper generated: $Script:PublishScriptPath"
-    Write-Info "Running publish helper..."
-    & $Script:PublishScriptPath -RepoUrl $RepoUrl -Branch $Branch -Token $Token
-    Write-Info "Publish complete to $RepoUrl ($Branch)"
 }
 
 function Get-LearnExcerpt {
@@ -627,9 +541,7 @@ function Start-InteractiveMode {
         "Refresh Microsoft Learn troubleshooting cache",
         "Run dsregcmd analysis and show report",
         "Apply fixes for current findings",
-        "Check for script updates from GitHub",
-        "Update script from GitHub",
-        "Publish script to GitHub",
+        "Check for script update (auto-apply if available)",
         "Export last report",
         "Exit"
     )
@@ -665,38 +577,13 @@ function Start-InteractiveMode {
                 Read-Host "Press Enter to continue" | Out-Null
             }
             3 {
-                try {
-                    $u = Get-UpdateStatus
-                    if ($u.HasUpdate) {
-                        Write-Warn "Update available: $($u.CurrentVersion) -> $($u.RemoteVersion)"
-                    }
-                    else {
-                        Write-Info "No update available. Current version: $($u.CurrentVersion)"
-                    }
-                }
+                try { Invoke-SelfUpdate -Force }
                 catch {
                     Write-Err $_.Exception.Message
                 }
                 Read-Host "Press Enter to continue" | Out-Null
             }
             4 {
-                try { Invoke-SelfUpdate }
-                catch { Write-Err $_.Exception.Message }
-                Read-Host "Press Enter to continue" | Out-Null
-            }
-            5 {
-                try {
-                    if (-not $GitHubRepoUrl) {
-                        $GitHubRepoUrl = Read-Host "Enter GitHub repo URL (https://github.com/<owner>/<repo>)"
-                    }
-                    Publish-ScriptToGitHub -RepoUrl $GitHubRepoUrl -Branch $GitHubBranch -Token $GitHubToken
-                }
-                catch {
-                    Write-Err $_.Exception.Message
-                }
-                Read-Host "Press Enter to continue" | Out-Null
-            }
-            6 {
                 if (-not $Script:LastAnalysis) {
                     Write-Warn "Run analysis first."
                     Start-Sleep -Seconds 1
@@ -705,7 +592,7 @@ function Start-InteractiveMode {
                 Export-Analysis -Analysis $Script:LastAnalysis -Path $ReportPath -JsonReport:$JsonReport
                 Read-Host "Press Enter to continue" | Out-Null
             }
-            7 { break }
+            5 { break }
         }
     }
 }
@@ -719,8 +606,6 @@ Usage examples:
   .\EntraHybridJoin-Troubleshooter.ps1 -NoMenu -Analyze -ApplyFixes -FixIds refresh-prt,run-device-join-task
   .\EntraHybridJoin-Troubleshooter.ps1 -NoMenu -Analyze -ExportReport -ReportPath C:\Temp\entra-report.txt
   .\EntraHybridJoin-Troubleshooter.ps1 -NoMenu -CheckUpdate
-  .\EntraHybridJoin-Troubleshooter.ps1 -NoMenu -UpdateSelf
-  .\EntraHybridJoin-Troubleshooter.ps1 -NoMenu -PublishToGitHub -GitHubRepoUrl https://github.com/<owner>/<repo>
 
 Switches:
   -NoMenu        Bypass interactive light-bar menu.
@@ -732,12 +617,7 @@ Switches:
   -ReportPath    Target report path (.txt default, .json when -JsonReport is set).
   -JsonReport    Export as JSON.
   -Force         Skip confirmation prompts before fix execution.
-  -CheckUpdate   Check GitHub source for a newer script version.
-  -UpdateSelf    Replace local script with latest from GitHub source.
-  -PublishToGitHub  Publish current script and LICENSE to a GitHub repository.
-  -GitHubRepoUrl GitHub repository URL (https://github.com/<owner>/<repo>).
-  -GitHubBranch  Target branch for publish (default: main).
-  -GitHubToken   Optional PAT for non-interactive publish.
+  -CheckUpdate   Check GitHub source; if newer version exists, update automatically.
 "@ | Write-Host
 }
 
@@ -745,7 +625,7 @@ try {
     $didAnything = $false
     Write-BrandHeader
 
-    if (-not $NoMenu -and -not ($RefreshLearn -or $Analyze -or $ApplyFixes -or $ExportReport -or $FixIds -or $CheckUpdate -or $UpdateSelf -or $PublishToGitHub)) {
+    if (-not $NoMenu -and -not ($RefreshLearn -or $Analyze -or $ApplyFixes -or $ExportReport -or $FixIds -or $CheckUpdate)) {
         Start-InteractiveMode
         return
     }
@@ -800,23 +680,7 @@ try {
     }
 
     if ($CheckUpdate) {
-        $u = Get-UpdateStatus
-        if ($u.HasUpdate) {
-            Write-Warn "Update available: $($u.CurrentVersion) -> $($u.RemoteVersion)"
-        }
-        else {
-            Write-Info "No update available. Current version: $($u.CurrentVersion)"
-        }
-        $didAnything = $true
-    }
-
-    if ($UpdateSelf) {
-        Invoke-SelfUpdate -Force:$Force
-        $didAnything = $true
-    }
-
-    if ($PublishToGitHub) {
-        Publish-ScriptToGitHub -RepoUrl $GitHubRepoUrl -Branch $GitHubBranch -Token $GitHubToken
+        Invoke-SelfUpdate -Force
         $didAnything = $true
     }
 

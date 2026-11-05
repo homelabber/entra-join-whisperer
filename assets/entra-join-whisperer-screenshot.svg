@@ -19,11 +19,9 @@
   <text x="84" y="293" fill="#0d1117" font-family="Consolas, 'Courier New', monospace" font-size="16">&gt; Refresh Microsoft Learn troubleshooting cache</text>
   <text x="84" y="328" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Run dsregcmd analysis and show report</text>
   <text x="84" y="363" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Apply fixes for current findings</text>
-  <text x="84" y="398" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Check for script updates from GitHub</text>
-  <text x="84" y="433" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Update script from GitHub</text>
-  <text x="84" y="468" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Publish script to GitHub</text>
-  <text x="84" y="503" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Export last report</text>
-  <text x="84" y="538" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Exit</text>
+  <text x="84" y="398" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Check for script update (auto-apply if available)</text>
+  <text x="84" y="433" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Export last report</text>
+  <text x="84" y="468" fill="#c9d1d9" font-family="Consolas, 'Courier New', monospace" font-size="16">  Exit</text>
 
   <text x="60" y="610" fill="#7ee787" font-family="Consolas, 'Courier New', monospace" font-size="15">Tip: use -NoMenu with switches for unattended automation in runbooks.</text>
 </svg>

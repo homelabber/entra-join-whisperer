@@ -13,7 +13,7 @@ Entra Join Whisperer is a PowerShell troubleshooting assistant for Microsoft Ent
 - Produces a readable issue report with evidence and fix guidance.
 - Offers optional auto-remediation with risk prompts.
 - Supports both an interactive light-bar menu and CLI automation switches.
-- Can self-update from GitHub and publish to GitHub.
+- Can self-update from GitHub.
 
 ## Microsoft Learn sources used
 
@@ -47,13 +47,8 @@ Entra Join Whisperer is a PowerShell troubleshooting assistant for Microsoft Ent
 | `-ExportReport` | Switch | Exports the latest analysis report to file. |
 | `-ReportPath <path>` | String | Sets report output path. Defaults to timestamped file in script folder. |
 | `-JsonReport` | Switch | Exports report in JSON instead of text. |
-| `-Force` | Switch | Skips interactive confirmation prompts for fixes/update. |
-| `-CheckUpdate` | Switch | Checks GitHub for a newer script version. |
-| `-UpdateSelf` | Switch | Replaces the local script with the latest GitHub version. |
-| `-PublishToGitHub` | Switch | Publishes script and license to a GitHub repository. |
-| `-GitHubRepoUrl <url>` | String | Target repo URL (for publish). |
-| `-GitHubBranch <name>` | String | Target branch for publish. Default: `main`. |
-| `-GitHubToken <token>` | String | Personal access token for authenticated publish. |
+| `-Force` | Switch | Skips interactive confirmation prompts for fixes. |
+| `-CheckUpdate` | Switch | Checks GitHub; if newer version exists, updates automatically. |
 
 ## Common examples
 
@@ -72,9 +67,6 @@ Entra Join Whisperer is a PowerShell troubleshooting assistant for Microsoft Ent
 
 # Check for updates
 .\EntraHybridJoin-Troubleshooter.ps1 -NoMenu -CheckUpdate
-
-# Self-update from GitHub source
-.\EntraHybridJoin-Troubleshooter.ps1 -NoMenu -UpdateSelf
 ```
 
 ## Auto-fix safety model
@@ -90,4 +82,3 @@ If in doubt, export a report first and review with your identity team.
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
